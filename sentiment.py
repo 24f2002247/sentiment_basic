@@ -1,9 +1,9 @@
-
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 
-from fastapi.middleware.cors import CORSMiddleware
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,20 +12,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-
-
-
-app = FastAPI()
-
 class SentimentRequest(BaseModel):
     sentences: List[str]
 
 def classify(sentence):
     text = sentence.lower()
 
-    happy_words = ["love", "happy", "great", "excellent", "good", "wonderful", "amazing", "enjoy"]
-    sad_words = ["sad", "terrible", "hate", "bad", "awful", "angry", "disappointed", "worst"]
+    happy_words = [
+        "love", "happy", "great", "excellent", "good",
+        "wonderful", "amazing", "enjoy"
+    ]
+    sad_words = [
+        "sad", "terrible", "hate", "bad", "awful",
+        "angry", "disappointed", "worst"
+    ]
 
     happy = sum(word in text for word in happy_words)
     sad = sum(word in text for word in sad_words)
@@ -48,3 +48,6 @@ def sentiment(request: SentimentRequest):
         ]
     }
 
+@app.get("/")
+def root():
+    return {"message": "Sentiment API is running"}
